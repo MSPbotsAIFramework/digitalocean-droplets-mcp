@@ -1,0 +1,219 @@
+[
+  {
+    "id": "TC-DOD-001",
+    "ac": "AC1",
+    "text": "Given a DigitalOcean account with existing Droplets, when the agent calls digitalocean_list_droplets, then every Droplet on that account is returned",
+    "type": "auto",
+    "tests": ["tests/test_tools.py::test_list_droplets_returns_all_droplets"]
+  },
+  {
+    "id": "TC-DOD-002",
+    "ac": "AC1",
+    "text": "Given a DigitalOcean account with zero Droplets, when the agent calls digitalocean_list_droplets, then an empty list is returned, not an error",
+    "type": "auto",
+    "tests": ["tests/test_tools.py::test_list_droplets_empty_account_returns_empty_list"]
+  },
+  {
+    "id": "TC-DOD-003",
+    "ac": "AC2",
+    "text": "Given a Droplet id that exists on the account, when the agent calls digitalocean_get_droplet, then the full Droplet record (id, name, status, region, size, image, networks) is returned",
+    "type": "auto",
+    "tests": ["tests/test_tools.py::test_get_droplet_returns_full_record"]
+  },
+  {
+    "id": "TC-DOD-004",
+    "ac": "AC2",
+    "text": "Given a Droplet id that does not exist, when the agent calls digitalocean_get_droplet, then a not_found error envelope is returned, not a 500 or an unhandled exception",
+    "type": "auto",
+    "tests": ["tests/test_tools.py::test_get_droplet_unknown_id_returns_not_found"]
+  },
+  {
+    "id": "TC-DOD-005",
+    "ac": "AC3",
+    "text": "Given valid name/region/size/image, when the agent calls digitalocean_create_droplet against a real account, then a new Droplet is created and its id and initial status are returned",
+    "type": "manual",
+    "steps": [
+      "Export a real DigitalOcean personal access token for a disposable test account",
+      "Call digitalocean_create_droplet with name=prd-21341-test, region=nyc3, size=s-1vcpu-1gb, image=ubuntu-24-04-x64",
+      "Read the tool result"
+    ],
+    "expect": "Tool result contains the new Droplet's numeric id and status \"new\"; DigitalOcean control panel shows the Droplet being provisioned",
+    "result": "untested",
+    "notes": "needs a real vendor account; no test account available at design time, not a blocker per SOP"
+  },
+  {
+    "id": "TC-DOD-006",
+    "ac": "AC3",
+    "text": "Given a create-droplet call missing a required field (e.g. no size), when the agent calls digitalocean_create_droplet, then invalid_argument is returned before any call reaches the DigitalOcean API",
+    "type": "auto",
+    "tests": ["tests/test_tools.py::test_create_droplet_missing_required_field_rejected_locally"]
+  },
+  {
+    "id": "TC-DOD-007",
+    "ac": "AC4",
+    "text": "Given an explicit existing Droplet id, when the agent calls digitalocean_delete_droplet against a real account, then only that Droplet is destroyed",
+    "type": "manual",
+    "steps": [
+      "Using the Droplet created in TC-DOD-005 (or a new disposable one)",
+      "Call digitalocean_delete_droplet with that Droplet's id",
+      "Call digitalocean_list_droplets and check the DigitalOcean control panel"
+    ],
+    "expect": "The targeted Droplet no longer appears in digitalocean_list_droplets or the control panel; any other Droplets on the account are untouched",
+    "result": "untested",
+    "notes": "needs a real vendor account"
+  },
+  {
+    "id": "TC-DOD-008",
+    "ac": "AC4",
+    "text": "Given a Droplet id that does not exist, when the agent calls digitalocean_delete_droplet, then not_found is returned",
+    "type": "auto",
+    "tests": ["tests/test_tools.py::test_delete_droplet_unknown_id_returns_not_found"]
+  },
+  {
+    "id": "TC-DOD-009",
+    "ac": "AC4",
+    "text": "The digitalocean_delete_droplet tool schema has no parameter that can target more than one Droplet per call (no bulk, wildcard, or \"all\" option)",
+    "type": "auto",
+    "tests": ["tests/test_tools.py::test_delete_droplet_schema_has_no_bulk_parameter"]
+  },
+  {
+    "id": "TC-DOD-010",
+    "ac": "AC5",
+    "text": "Given a Droplet id and type=power_off, when the agent calls digitalocean_droplet_action against a real account, then exactly that action is performed and its id and initial status are returned",
+    "type": "manual",
+    "steps": [
+      "Using a running test Droplet",
+      "Call digitalocean_droplet_action with type=power_off and that Droplet's id",
+      "Read the tool result; check the Droplet's power state a few seconds later"
+    ],
+    "expect": "Tool result contains an action id and status \"in-progress\"; the Droplet transitions to \"off\"; no other Droplet or action type was triggered",
+    "result": "untested",
+    "notes": "needs a real vendor account"
+  },
+  {
+    "id": "TC-DOD-011",
+    "ac": "AC5",
+    "text": "Given an unsupported action type value, when the agent calls digitalocean_droplet_action, then invalid_argument is returned before any call reaches the DigitalOcean API",
+    "type": "auto",
+    "tests": ["tests/test_tools.py::test_droplet_action_unsupported_type_rejected_locally"]
+  },
+  {
+    "id": "TC-DOD-012",
+    "ac": "AC6",
+    "text": "Given the action id from TC-DOD-010, when the agent polls digitalocean_get_action / digitalocean_list_droplet_actions, then the action's status is observed transitioning from in-progress to completed",
+    "type": "manual",
+    "steps": [
+      "Using the action id returned by TC-DOD-010",
+      "Call digitalocean_get_action immediately, then again every few seconds",
+      "Also call digitalocean_list_droplet_actions for the same Droplet"
+    ],
+    "expect": "Status starts at \"in-progress\" and is observed to reach \"completed\" (or \"errored\", reported if so); the action appears in digitalocean_list_droplet_actions for that Droplet",
+    "result": "untested",
+    "notes": "needs a real vendor account"
+  },
+  {
+    "id": "TC-DOD-013",
+    "ac": "AC7",
+    "text": "Given a Droplet with at least one snapshot and one backup, when the agent calls digitalocean_list_snapshots / digitalocean_list_backups against a real account, then that Droplet's snapshots/backups are returned",
+    "type": "manual",
+    "steps": [
+      "Using a test Droplet with backups enabled and at least one manual snapshot taken",
+      "Call digitalocean_list_snapshots with that Droplet's id",
+      "Call digitalocean_list_backups with that Droplet's id"
+    ],
+    "expect": "Both calls return the snapshot/backup records that exist for that Droplet in the DigitalOcean control panel, and none from any other Droplet",
+    "result": "untested",
+    "notes": "needs a real vendor account"
+  },
+  {
+    "id": "TC-DOD-014",
+    "ac": "AC7",
+    "text": "Given an explicit snapshot id, when the agent calls digitalocean_delete_snapshot against a real account, then only that snapshot is destroyed, with no bulk-delete option available",
+    "type": "manual",
+    "steps": [
+      "Using the snapshot from TC-DOD-013",
+      "Call digitalocean_delete_snapshot with that snapshot's id",
+      "Call digitalocean_list_snapshots again"
+    ],
+    "expect": "The targeted snapshot no longer appears; any other snapshots on the account are untouched; the tool schema has no parameter for deleting more than one snapshot per call",
+    "result": "untested",
+    "notes": "needs a real vendor account"
+  },
+  {
+    "id": "TC-DOD-015",
+    "ac": "AC8",
+    "text": "When the agent calls digitalocean_list_regions, then the result respects the limit parameter and returns has_more instead of an unbounded list",
+    "type": "auto",
+    "tests": ["tests/test_tools.py::test_list_regions_respects_limit_and_has_more"]
+  },
+  {
+    "id": "TC-DOD-016",
+    "ac": "AC8",
+    "text": "When the agent calls digitalocean_list_sizes, then the result respects the limit parameter and returns has_more instead of an unbounded list",
+    "type": "auto",
+    "tests": ["tests/test_tools.py::test_list_sizes_respects_limit_and_has_more"]
+  },
+  {
+    "id": "TC-DOD-017",
+    "ac": "AC8",
+    "text": "When the agent calls digitalocean_list_images, then the result respects the limit parameter and returns has_more instead of an unbounded list",
+    "type": "auto",
+    "tests": ["tests/test_tools.py::test_list_images_respects_limit_and_has_more"]
+  },
+  {
+    "id": "TC-DOD-018",
+    "ac": "AC9",
+    "text": "Given a request with no X-DigitalOcean-Api-Token header, when any tool is called, then the server returns 401 listing the required header, before any call reaches the DigitalOcean API",
+    "type": "auto",
+    "tests": ["tests/test_middleware.py::test_missing_credential_header_returns_401_before_upstream_call"]
+  },
+  {
+    "id": "TC-DOD-019",
+    "ac": "AC10",
+    "text": "Given the DigitalOcean API returns 401, when a tool call is in flight, then the server maps it to unauthorized inside the structured error envelope",
+    "type": "auto",
+    "tests": ["tests/test_tools.py::test_upstream_401_maps_to_unauthorized"]
+  },
+  {
+    "id": "TC-DOD-020",
+    "ac": "AC10",
+    "text": "Given the DigitalOcean API returns 422, when a tool call is in flight, then the server maps it to invalid_argument inside the structured error envelope",
+    "type": "auto",
+    "tests": ["tests/test_tools.py::test_upstream_422_maps_to_invalid_argument"]
+  },
+  {
+    "id": "TC-DOD-021",
+    "ac": "AC10",
+    "text": "Given the DigitalOcean API returns 429, when a tool call is in flight, then the server maps it to rate_limited and relays the Retry-After value",
+    "type": "auto",
+    "tests": ["tests/test_tools.py::test_upstream_429_maps_to_rate_limited_with_retry_after"]
+  },
+  {
+    "id": "TC-DOD-022",
+    "ac": "AC10",
+    "text": "Given the DigitalOcean API returns a 5xx or the call fails on the network, when a tool call is in flight, then the server maps it to upstream_error without raising an unhandled exception",
+    "type": "auto",
+    "tests": ["tests/test_tools.py::test_upstream_5xx_and_network_failure_map_to_upstream_error"]
+  },
+  {
+    "id": "TC-DOD-023",
+    "ac": "AC11",
+    "text": "Given two concurrent requests carrying two different tenants' API tokens, when both call the same tool at the same time, then neither request's response, log entry, or outbound call carries the other tenant's token or data",
+    "type": "auto",
+    "tests": ["tests/test_middleware.py::test_concurrent_requests_with_different_tokens_never_cross"]
+  },
+  {
+    "id": "TC-DOD-024",
+    "ac": "AC12",
+    "text": "Given no DigitalOcean credential is available and there is no network path to api.digitalocean.com, when GET /health is called, then it still returns 200",
+    "type": "auto",
+    "tests": ["tests/test_middleware.py::test_health_endpoint_returns_200_without_do_credential_or_reachability"]
+  },
+  {
+    "id": "TC-DOD-025",
+    "ac": "AC13",
+    "text": "Given a fresh connection with no prior session, when the agent calls initialize followed by tools/list, then both succeed statelessly and tools/list returns a non-empty tool list (13 tools)",
+    "type": "auto",
+    "tests": ["tests/test_tools.py::test_initialize_and_tools_list_are_stateless_and_return_all_tools"]
+  }
+]
