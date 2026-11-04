@@ -4,28 +4,44 @@
     "ac": "AC1",
     "text": "Given a DigitalOcean account with existing Droplets, when the agent calls digitalocean_list_droplets, then every Droplet on that account is returned",
     "type": "auto",
-    "tests": ["tests/test_tools.py::test_list_droplets_returns_all_droplets"]
+    "tests": [
+      "tests/test_tools.py::test_list_droplets_returns_all_droplets"
+    ],
+    "result": "pass",
+    "evidence": "tests/test_tools.py::test_list_droplets_returns_all_droplets PASSED (pytest tests/ -v, full run 2026-11-04 (19 passed, 2 warnings -- see docs/tickets/PRD-21341.md Self-test))"
   },
   {
     "id": "TC-DOD-002",
     "ac": "AC1",
     "text": "Given a DigitalOcean account with zero Droplets, when the agent calls digitalocean_list_droplets, then an empty list is returned, not an error",
     "type": "auto",
-    "tests": ["tests/test_tools.py::test_list_droplets_empty_account_returns_empty_list"]
+    "tests": [
+      "tests/test_tools.py::test_list_droplets_empty_account_returns_empty_list"
+    ],
+    "result": "pass",
+    "evidence": "tests/test_tools.py::test_list_droplets_empty_account_returns_empty_list PASSED (pytest tests/ -v, full run 2026-11-04 (19 passed, 2 warnings -- see docs/tickets/PRD-21341.md Self-test))"
   },
   {
     "id": "TC-DOD-003",
     "ac": "AC2",
     "text": "Given a Droplet id that exists on the account, when the agent calls digitalocean_get_droplet, then the full Droplet record (id, name, status, region, size, image, networks) is returned",
     "type": "auto",
-    "tests": ["tests/test_tools.py::test_get_droplet_returns_full_record"]
+    "tests": [
+      "tests/test_tools.py::test_get_droplet_returns_full_record"
+    ],
+    "result": "pass",
+    "evidence": "tests/test_tools.py::test_get_droplet_returns_full_record PASSED (pytest tests/ -v, full run 2026-11-04 (19 passed, 2 warnings -- see docs/tickets/PRD-21341.md Self-test))"
   },
   {
     "id": "TC-DOD-004",
     "ac": "AC2",
     "text": "Given a Droplet id that does not exist, when the agent calls digitalocean_get_droplet, then a not_found error envelope is returned, not a 500 or an unhandled exception",
     "type": "auto",
-    "tests": ["tests/test_tools.py::test_get_droplet_unknown_id_returns_not_found"]
+    "tests": [
+      "tests/test_tools.py::test_get_droplet_unknown_id_returns_not_found"
+    ],
+    "result": "pass",
+    "evidence": "tests/test_tools.py::test_get_droplet_unknown_id_returns_not_found PASSED (pytest tests/ -v, full run 2026-11-04 (19 passed, 2 warnings -- see docs/tickets/PRD-21341.md Self-test))"
   },
   {
     "id": "TC-DOD-005",
@@ -46,7 +62,11 @@
     "ac": "AC3",
     "text": "Given a create-droplet call missing a required field (e.g. no size), when the agent calls digitalocean_create_droplet, then invalid_argument is returned before any call reaches the DigitalOcean API",
     "type": "auto",
-    "tests": ["tests/test_tools.py::test_create_droplet_missing_required_field_rejected_locally"]
+    "tests": [
+      "tests/test_tools.py::test_create_droplet_missing_required_field_rejected_locally"
+    ],
+    "result": "pass",
+    "evidence": "tests/test_tools.py::test_create_droplet_missing_required_field_rejected_locally PASSED (pytest tests/ -v, full run 2026-11-04 (19 passed, 2 warnings -- see docs/tickets/PRD-21341.md Self-test))"
   },
   {
     "id": "TC-DOD-007",
@@ -67,14 +87,22 @@
     "ac": "AC4",
     "text": "Given a Droplet id that does not exist, when the agent calls digitalocean_delete_droplet, then not_found is returned",
     "type": "auto",
-    "tests": ["tests/test_tools.py::test_delete_droplet_unknown_id_returns_not_found"]
+    "tests": [
+      "tests/test_tools.py::test_delete_droplet_unknown_id_returns_not_found"
+    ],
+    "result": "pass",
+    "evidence": "tests/test_tools.py::test_delete_droplet_unknown_id_returns_not_found PASSED (pytest tests/ -v, full run 2026-11-04 (19 passed, 2 warnings -- see docs/tickets/PRD-21341.md Self-test))"
   },
   {
     "id": "TC-DOD-009",
     "ac": "AC4",
     "text": "The digitalocean_delete_droplet tool schema has no parameter that can target more than one Droplet per call (no bulk, wildcard, or \"all\" option)",
     "type": "auto",
-    "tests": ["tests/test_tools.py::test_delete_droplet_schema_has_no_bulk_parameter"]
+    "tests": [
+      "tests/test_tools.py::test_delete_droplet_schema_has_no_bulk_parameter"
+    ],
+    "result": "pass",
+    "evidence": "tests/test_tools.py::test_delete_droplet_schema_has_no_bulk_parameter PASSED (pytest tests/ -v, full run 2026-11-04 (19 passed, 2 warnings -- see docs/tickets/PRD-21341.md Self-test))"
   },
   {
     "id": "TC-DOD-010",
@@ -95,7 +123,11 @@
     "ac": "AC5",
     "text": "Given an unsupported action type value, when the agent calls digitalocean_droplet_action, then invalid_argument is returned before any call reaches the DigitalOcean API",
     "type": "auto",
-    "tests": ["tests/test_tools.py::test_droplet_action_unsupported_type_rejected_locally"]
+    "tests": [
+      "tests/test_tools.py::test_droplet_action_unsupported_type_rejected_locally"
+    ],
+    "result": "pass",
+    "evidence": "tests/test_tools.py::test_droplet_action_unsupported_type_rejected_locally PASSED (pytest tests/ -v, full run 2026-11-04 (19 passed, 2 warnings -- see docs/tickets/PRD-21341.md Self-test))"
   },
   {
     "id": "TC-DOD-012",
@@ -144,76 +176,120 @@
     "ac": "AC8",
     "text": "When the agent calls digitalocean_list_regions, then the result respects the limit parameter and returns has_more instead of an unbounded list",
     "type": "auto",
-    "tests": ["tests/test_tools.py::test_list_regions_respects_limit_and_has_more"]
+    "tests": [
+      "tests/test_tools.py::test_list_regions_respects_limit_and_has_more"
+    ],
+    "result": "pass",
+    "evidence": "tests/test_tools.py::test_list_regions_respects_limit_and_has_more PASSED (pytest tests/ -v, full run 2026-11-04 (19 passed, 2 warnings -- see docs/tickets/PRD-21341.md Self-test))"
   },
   {
     "id": "TC-DOD-016",
     "ac": "AC8",
     "text": "When the agent calls digitalocean_list_sizes, then the result respects the limit parameter and returns has_more instead of an unbounded list",
     "type": "auto",
-    "tests": ["tests/test_tools.py::test_list_sizes_respects_limit_and_has_more"]
+    "tests": [
+      "tests/test_tools.py::test_list_sizes_respects_limit_and_has_more"
+    ],
+    "result": "pass",
+    "evidence": "tests/test_tools.py::test_list_sizes_respects_limit_and_has_more PASSED (pytest tests/ -v, full run 2026-11-04 (19 passed, 2 warnings -- see docs/tickets/PRD-21341.md Self-test))"
   },
   {
     "id": "TC-DOD-017",
     "ac": "AC8",
     "text": "When the agent calls digitalocean_list_images, then the result respects the limit parameter and returns has_more instead of an unbounded list",
     "type": "auto",
-    "tests": ["tests/test_tools.py::test_list_images_respects_limit_and_has_more"]
+    "tests": [
+      "tests/test_tools.py::test_list_images_respects_limit_and_has_more"
+    ],
+    "result": "pass",
+    "evidence": "tests/test_tools.py::test_list_images_respects_limit_and_has_more PASSED (pytest tests/ -v, full run 2026-11-04 (19 passed, 2 warnings -- see docs/tickets/PRD-21341.md Self-test))"
   },
   {
     "id": "TC-DOD-018",
     "ac": "AC9",
     "text": "Given a request with no X-DigitalOcean-Api-Token header, when any tool is called, then the server returns 401 listing the required header, before any call reaches the DigitalOcean API",
     "type": "auto",
-    "tests": ["tests/test_middleware.py::test_missing_credential_header_returns_401_before_upstream_call"]
+    "tests": [
+      "tests/test_middleware.py::test_missing_credential_header_returns_401_before_upstream_call"
+    ],
+    "result": "pass",
+    "evidence": "tests/test_middleware.py::test_missing_credential_header_returns_401_before_upstream_call PASSED (pytest tests/ -v, full run 2026-11-04 (19 passed, 2 warnings -- see docs/tickets/PRD-21341.md Self-test))"
   },
   {
     "id": "TC-DOD-019",
     "ac": "AC10",
     "text": "Given the DigitalOcean API returns 401, when a tool call is in flight, then the server maps it to unauthorized inside the structured error envelope",
     "type": "auto",
-    "tests": ["tests/test_tools.py::test_upstream_401_maps_to_unauthorized"]
+    "tests": [
+      "tests/test_tools.py::test_upstream_401_maps_to_unauthorized"
+    ],
+    "result": "pass",
+    "evidence": "tests/test_tools.py::test_upstream_401_maps_to_unauthorized PASSED (pytest tests/ -v, full run 2026-11-04 (19 passed, 2 warnings -- see docs/tickets/PRD-21341.md Self-test))"
   },
   {
     "id": "TC-DOD-020",
     "ac": "AC10",
     "text": "Given the DigitalOcean API returns 422, when a tool call is in flight, then the server maps it to invalid_argument inside the structured error envelope",
     "type": "auto",
-    "tests": ["tests/test_tools.py::test_upstream_422_maps_to_invalid_argument"]
+    "tests": [
+      "tests/test_tools.py::test_upstream_422_maps_to_invalid_argument"
+    ],
+    "result": "pass",
+    "evidence": "tests/test_tools.py::test_upstream_422_maps_to_invalid_argument PASSED (pytest tests/ -v, full run 2026-11-04 (19 passed, 2 warnings -- see docs/tickets/PRD-21341.md Self-test))"
   },
   {
     "id": "TC-DOD-021",
     "ac": "AC10",
     "text": "Given the DigitalOcean API returns 429, when a tool call is in flight, then the server maps it to rate_limited and relays the Retry-After value",
     "type": "auto",
-    "tests": ["tests/test_tools.py::test_upstream_429_maps_to_rate_limited_with_retry_after"]
+    "tests": [
+      "tests/test_tools.py::test_upstream_429_maps_to_rate_limited_with_retry_after"
+    ],
+    "result": "pass",
+    "evidence": "tests/test_tools.py::test_upstream_429_maps_to_rate_limited_with_retry_after PASSED (pytest tests/ -v, full run 2026-11-04 (19 passed, 2 warnings -- see docs/tickets/PRD-21341.md Self-test))"
   },
   {
     "id": "TC-DOD-022",
     "ac": "AC10",
     "text": "Given the DigitalOcean API returns a 5xx or the call fails on the network, when a tool call is in flight, then the server maps it to upstream_error without raising an unhandled exception",
     "type": "auto",
-    "tests": ["tests/test_tools.py::test_upstream_5xx_and_network_failure_map_to_upstream_error"]
+    "tests": [
+      "tests/test_tools.py::test_upstream_5xx_and_network_failure_map_to_upstream_error"
+    ],
+    "result": "pass",
+    "evidence": "tests/test_tools.py::test_upstream_5xx_and_network_failure_map_to_upstream_error PASSED (pytest tests/ -v, full run 2026-11-04 (19 passed, 2 warnings -- see docs/tickets/PRD-21341.md Self-test))"
   },
   {
     "id": "TC-DOD-023",
     "ac": "AC11",
     "text": "Given two concurrent requests carrying two different tenants' API tokens, when both call the same tool at the same time, then neither request's response, log entry, or outbound call carries the other tenant's token or data",
     "type": "auto",
-    "tests": ["tests/test_middleware.py::test_concurrent_requests_with_different_tokens_never_cross"]
+    "tests": [
+      "tests/test_middleware.py::test_concurrent_requests_with_different_tokens_never_cross"
+    ],
+    "result": "pass",
+    "evidence": "tests/test_middleware.py::test_concurrent_requests_with_different_tokens_never_cross PASSED (pytest tests/ -v, full run 2026-11-04 (19 passed, 2 warnings -- see docs/tickets/PRD-21341.md Self-test))"
   },
   {
     "id": "TC-DOD-024",
     "ac": "AC12",
     "text": "Given no DigitalOcean credential is available and there is no network path to api.digitalocean.com, when GET /health is called, then it still returns 200",
     "type": "auto",
-    "tests": ["tests/test_middleware.py::test_health_endpoint_returns_200_without_do_credential_or_reachability"]
+    "tests": [
+      "tests/test_middleware.py::test_health_endpoint_returns_200_without_do_credential_or_reachability"
+    ],
+    "result": "pass",
+    "evidence": "tests/test_middleware.py::test_health_endpoint_returns_200_without_do_credential_or_reachability PASSED (pytest tests/ -v, full run 2026-11-04 (19 passed, 2 warnings -- see docs/tickets/PRD-21341.md Self-test))"
   },
   {
     "id": "TC-DOD-025",
     "ac": "AC13",
     "text": "Given a fresh connection with no prior session, when the agent calls initialize followed by tools/list, then both succeed statelessly and tools/list returns a non-empty tool list (13 tools)",
     "type": "auto",
-    "tests": ["tests/test_tools.py::test_initialize_and_tools_list_are_stateless_and_return_all_tools"]
+    "tests": [
+      "tests/test_tools.py::test_initialize_and_tools_list_are_stateless_and_return_all_tools"
+    ],
+    "result": "pass",
+    "evidence": "tests/test_tools.py::test_initialize_and_tools_list_are_stateless_and_return_all_tools PASSED (pytest tests/ -v, full run 2026-11-04 (19 passed, 2 warnings -- see docs/tickets/PRD-21341.md Self-test))"
   }
 ]
