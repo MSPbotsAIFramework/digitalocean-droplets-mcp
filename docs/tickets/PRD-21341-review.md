@@ -1,5 +1,24 @@
 # PRD-21341 · Code review
 
+## Round 2 · 2026-11-05 · reviewed dev/PRD-21341 @ aac0213 (base main @ 7099212)
+
+Status: frozen @ aac0213
+
+Verdict: approved
+
+### Fixes (round 1 must-fix items)
+
+1. `client.py:70-93` — retry loop now wrapped in `asyncio.wait_for(..., timeout=OVERALL_BUDGET_SECONDS)` with `OVERALL_BUDGET_SECONDS = 100.0`, and the timeout/network-error branch only calls `self._backoff()` `if attempt < MAX_RETRIES` (matching the existing 429/5xx branch), so it no longer sleeps after the final attempt. Verified: `tests/test_client.py::test_timeout_retries_exactly_max_retries_times_with_backoff_only_between_attempts` (4 attempts, exactly 3 backoff calls `[0, 1, 2]`) and `::test_overall_budget_aborts_a_permanently_stalled_upstream_well_under_120s` (budget shrunk to 0.3s via monkeypatch, call aborts in well under 5s instead of the ~135-240s worst case). Commit `db332ba`.
+2. `client.py`, `tools/*.py`, `middleware.py`, `server.py` — structured JSON logging added: new `logging_config.py` (`JsonFormatter`, `configure_logging()`, `log_event()`), a request-correlation id in `middleware.py` (`current_request_id()`, set/reset alongside the token var, never logged), and `client.py::_log()` logging `request_id`, `tool_name`, `method`, `path`, `status_code`, `duration_ms`, `attempts`, `digitalocean_request_id`, `error_code` — never the token or response bodies. All 13 tool call sites now pass `tool_name=`. Verified: `tests/test_client.py::test_call_is_logged_with_tool_status_duration_and_never_the_token` asserts the fields are present and that `SECRET_TOKEN` never appears in any log record. Commit `db332ba`.
+
+### Verification this round
+
+- `git diff 398cdac..aac0213`: only `client.py`, `errors.py` (extracted `error_code_for_status()` to share the status→code mapping, no behavior change), `logging_config.py` (new), `middleware.py`, `server.py`, `tools/*.py` (mechanical `tool_name=` passthrough), `tests/test_client.py` (3 new regression tests), and the two doc files. No change outside the two must-fix items' scope.
+- `uv sync && uv run pytest -q`: 22 passed, 0 failed (on `aac0213`, synced with `main @ 7099212` — still an ancestor, no merge needed).
+- Chinese-text scan (`grep -rnP '[\x{4e00}-\x{9fff}]' --exclude-dir=.git --exclude-dir=.venv .`): only pre-existing hits inside this review record's own round-1 finding text (quoting the SOP); no hits in any source/doc file this round touched.
+- README Connector section: unchanged this round, still byte-identical to `reference/readme-connector-section.md` (verified in round 1).
+- Token/credential handling: `_token_var` contextvar, reset in `finally`, never passed to `log_event`; grep for `token` across `src/` confirms the only places it reaches are the `Authorization` header construction and the context var itself.
+
 ## Round 1 · 2026-11-05 · reviewed dev/PRD-21341 @ 398cdac (base main @ 7099212)
 
 Verdict: changes requested
