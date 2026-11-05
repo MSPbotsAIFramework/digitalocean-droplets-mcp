@@ -23,6 +23,7 @@ from starlette.routing import Mount, Route
 
 from digitalocean_droplets_mcp.client import DigitalOceanClient
 from digitalocean_droplets_mcp.config import settings
+from digitalocean_droplets_mcp.logging_config import configure_logging
 from digitalocean_droplets_mcp.middleware import credential_middleware, current_token
 from digitalocean_droplets_mcp.tools import actions, droplets, images, reference_data
 
@@ -83,6 +84,7 @@ async def health(_request: Request) -> JSONResponse:
 
 
 def build_app() -> Starlette:
+    configure_logging()
     mcp = build_mcp()
     # stateless_http belongs here (not on the FastMCP constructor, which is deprecated
     # for this purpose): no session affinity, a fresh transport per request, per SOP §1.3.

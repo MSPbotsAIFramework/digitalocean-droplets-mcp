@@ -62,7 +62,9 @@ def register(mcp: FastMCP, client_factory: ClientFactory) -> None:
 
         async with client:
             try:
-                response = await client.request("GET", "/droplets", params=params)
+                response = await client.request(
+                    "GET", "/droplets", params=params, tool_name="digitalocean_list_droplets"
+                )
             except UpstreamApiError as exc:
                 return handle_upstream_error(exc)
 
@@ -87,7 +89,9 @@ def register(mcp: FastMCP, client_factory: ClientFactory) -> None:
 
         async with client:
             try:
-                response = await client.request("GET", f"/droplets/{droplet_id}")
+                response = await client.request(
+                    "GET", f"/droplets/{droplet_id}", tool_name="digitalocean_get_droplet"
+                )
             except UpstreamApiError as exc:
                 return handle_upstream_error(exc)
 
@@ -128,7 +132,9 @@ def register(mcp: FastMCP, client_factory: ClientFactory) -> None:
 
         async with client:
             try:
-                response = await client.request("POST", "/droplets", json_body=body)
+                response = await client.request(
+                    "POST", "/droplets", json_body=body, tool_name="digitalocean_create_droplet"
+                )
             except UpstreamApiError as exc:
                 return handle_upstream_error(exc)
 
@@ -152,7 +158,9 @@ def register(mcp: FastMCP, client_factory: ClientFactory) -> None:
 
         async with client:
             try:
-                await client.request("DELETE", f"/droplets/{droplet_id}")
+                await client.request(
+                    "DELETE", f"/droplets/{droplet_id}", tool_name="digitalocean_delete_droplet"
+                )
             except UpstreamApiError as exc:
                 return handle_upstream_error(exc)
 

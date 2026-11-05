@@ -52,7 +52,10 @@ def register(mcp: FastMCP, client_factory: ClientFactory) -> None:
         async with client:
             try:
                 response = await client.request(
-                    "GET", f"/droplets/{droplet_id}/snapshots", params={"per_page": per_page}
+                    "GET",
+                    f"/droplets/{droplet_id}/snapshots",
+                    params={"per_page": per_page},
+                    tool_name="digitalocean_list_snapshots",
                 )
             except UpstreamApiError as exc:
                 return handle_upstream_error(exc)
@@ -80,7 +83,9 @@ def register(mcp: FastMCP, client_factory: ClientFactory) -> None:
 
         async with client:
             try:
-                await client.request("DELETE", f"/snapshots/{snapshot_id}")
+                await client.request(
+                    "DELETE", f"/snapshots/{snapshot_id}", tool_name="digitalocean_delete_snapshot"
+                )
             except UpstreamApiError as exc:
                 return handle_upstream_error(exc)
 
@@ -101,7 +106,10 @@ def register(mcp: FastMCP, client_factory: ClientFactory) -> None:
         async with client:
             try:
                 response = await client.request(
-                    "GET", f"/droplets/{droplet_id}/backups", params={"per_page": per_page}
+                    "GET",
+                    f"/droplets/{droplet_id}/backups",
+                    params={"per_page": per_page},
+                    tool_name="digitalocean_list_backups",
                 )
             except UpstreamApiError as exc:
                 return handle_upstream_error(exc)

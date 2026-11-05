@@ -66,7 +66,9 @@ def register(mcp: FastMCP, client_factory: ClientFactory) -> None:
         per_page = resolve_limit(limit)
         async with client:
             try:
-                response = await client.request("GET", "/regions", params={"per_page": per_page})
+                response = await client.request(
+                    "GET", "/regions", params={"per_page": per_page}, tool_name="digitalocean_list_regions"
+                )
             except UpstreamApiError as exc:
                 return handle_upstream_error(exc)
 
@@ -94,7 +96,9 @@ def register(mcp: FastMCP, client_factory: ClientFactory) -> None:
         per_page = resolve_limit(limit)
         async with client:
             try:
-                response = await client.request("GET", "/sizes", params={"per_page": per_page})
+                response = await client.request(
+                    "GET", "/sizes", params={"per_page": per_page}, tool_name="digitalocean_list_sizes"
+                )
             except UpstreamApiError as exc:
                 return handle_upstream_error(exc)
 
@@ -130,7 +134,9 @@ def register(mcp: FastMCP, client_factory: ClientFactory) -> None:
 
         async with client:
             try:
-                response = await client.request("GET", "/images", params=params)
+                response = await client.request(
+                    "GET", "/images", params=params, tool_name="digitalocean_list_images"
+                )
             except UpstreamApiError as exc:
                 return handle_upstream_error(exc)
 
